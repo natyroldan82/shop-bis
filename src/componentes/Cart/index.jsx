@@ -3,9 +3,31 @@ import { useCartContext } from '../../context/CartContext';
 import { Link } from 'react-router-dom';
 import ItemCart from '../ItemCart';
 
+import {addDoc, collection, getFirestore} from 'firebase/firestore';
 
 export const Cart = () => {
   const {cart, totalPrice}= useCartContext();
+
+  const order= {
+    buyer: {
+      name: 'Natalia',
+      email : 'natyroldan82@gmail.com',
+      phone : '321321',
+      address: 'Argentina'
+    },
+    items : cart.map(productos =>({id: productos.id, title: productos.title, price: productos.price, quantity:productos.quantity})),
+    total: totalPrice(),
+  }
+
+const handleClick = () => {
+
+   const db = getFirestore();
+   const ordersCollection = collection(db,'orders');
+   addDoc(ordersCollection, order)
+    .then(({id}) => console.log(id))
+}
+
+
 if (cart.length ===0){
   return(
     <>
@@ -22,10 +44,18 @@ if (cart.length ===0){
    {
     cart.map(product => <ItemCart key = {product.id} product= {product}/>)
    }
-   <p className="bg-dark text-white text-center">
-    Total $ {totalPrice()}
+   <p className="bg-dark text-white text-center ">
+    Total del carrito $ {totalPrice()}
+   
    </p>
+   <div>
+   <button className="py-4 mt-3 bg-success me-md-2 text-white"onClick={handleClick()}> Terminar Compra</button>
+   </div>
+  
+  
    </>
+   
+   
   )
 }
 export default Cart;

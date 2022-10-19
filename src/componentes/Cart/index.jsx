@@ -1,9 +1,10 @@
 import React from 'react';
-import { useCartContext } from '../../context/CartContext';
+import { useCartContext} from '../../context/CartContext';
 import { Link } from 'react-router-dom';
 import ItemCart from '../ItemCart';
 import swal from 'sweetalert';
 import {addDoc, collection, getFirestore,serverTimestamp, doc, updateDoc,increment} from 'firebase/firestore';
+
 
 export const Cart = () => {
   const {cart, totalPrice}= useCartContext();
@@ -21,17 +22,17 @@ export const Cart = () => {
   }
 
   const handleClick = () => {
-
+ 
    const db = getFirestore();
    const ordersCollection = collection(db,'orders')
    addDoc(ordersCollection, order)
     .then(({id}) => console.log(id))
     swal(" Se cargo correctamenta la orden")
-
+   
 cart.map(async (productos) => {
   const itemref = doc(db, "productos", productos.id);
   await updateDoc(itemref, {
-    stock: increment(-productos.quantity)
+    stock: increment(-productos.quantity),
 
 });
 })
@@ -59,7 +60,7 @@ if (cart.length ===0){
    </p>
    <div>
    <button className="py-4 mt-3 bg-success me-md-2 text-white"onClick={handleClick}> Terminar Compra</button>
-   </div>
+  </div>
   
   
    </>
